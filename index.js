@@ -9,4 +9,7 @@ client.prefix = prefix;
 client.commands = new Collection();
 module.exports = client;
 
+//HANDLER
+require("./handler/handler.js");
+
 client.login(token);
