@@ -1,4 +1,5 @@
 {
   "prefix": "grow ",
-  "token": "OTczNjQwMDQ4MzMzNDI2Njk4.GDiakD.5ya5sEhypgxoqduavs0GprZTisLiV7CM-27LGA"
+  "token": "OTczNjQwMDQ4MzMzNDI2Njk4.GDiakD.5ya5sEhypgxoqduavs0GprZTisLiV7CM-27LGA",
+  "mongoURL": "mongodb+srv://Mohammed:RYWNiDtUBZhL9XV@cluster0.ruv2c.mongodb.net/Data"
 }

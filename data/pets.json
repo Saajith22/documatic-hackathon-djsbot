@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Slime",
+    "str": 25,
+    "moves": [
+      "Sticky Slime",
+      "Slime Ranch"
+    ]
+  }
+]
