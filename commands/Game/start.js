@@ -10,6 +10,7 @@ const Canvas = require("canvas");
 
 const pets = require("../../data/pets.json");
 const { pagination } = require("../../data/functions.js");
+const { addCreature } = require("../../data/creatures.js");
 
 module.exports = {
   name: "start",
@@ -40,7 +41,7 @@ module.exports = {
     const embed = new MessageEmbed()
       .setTitle("Welcome to GROW!")
       .setDescription(
-        "Grow is a game based on growing your creatures and keeping them happy! \n\nChoose your first pet by clicking the 'Next' button!"
+        "Grow is a game based on growing your creatures and keeping them happy! \n\nChoose your first pet by clicking the **'Next'** button!"
       )
       .setImage("attachment://grow.png")
       .setColor("YELLOW");
@@ -66,16 +67,36 @@ module.exports = {
         const embeds = pets.map((pet) => {
           return new MessageEmbed()
             .setTitle(pet.name)
-            .setDescription(pet.moves.join("\n"))
-            .setColor("YELLOW");
+            .setThumbnail(pet.img)
+            .addFields([
+              {
+                name: "Moves",
+                value: `>>> ${pet.moves.join("\n")}`,
+                inline: true,
+              },
+              {
+                name: "Strength",
+                value: pet.str.toString(),
+                inline: true,
+              },
+            ])
+            .setColor("YELLOW")
+            .setFooter({
+              text: "Press the check mark to select!!",
+            });
         });
 
-        await msg.edit({
-          files: [],
-          components: [],
-        });
+        const extraProps = [
+          {
+            button: new MessageButton()
+              .setEmoji("✅")
+              .setCustomId("select")
+              .setStyle("SUCCESS"),
+            func: addCreature,
+          },
+        ];
 
-        await pagination(msg, message.author.id, embeds);
+        await pagination(msg, message.author.id, embeds, extraProps);
       }
     );
   },

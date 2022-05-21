@@ -5,6 +5,16 @@
     "moves": [
       "Sticky Slime",
       "Slime Ranch"
-    ]
+    ],
+    "img": "https://i.imgur.com/X5JJ4hU.png"
+  },
+  {
+    "name": "Skeleton",
+    "str": 25,
+    "moves": [
+      "Double Shot",
+      "Arrow Hail"
+    ],
+    "img": "https://i.imgur.com/DO4ahmb.png"
   }
 ]

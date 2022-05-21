@@ -5,13 +5,16 @@ const {
   MessageEmbed,
 } = require("discord.js");
 
+const pets = require("./pets.json");
+
 /**
  *
  * @param {Message} msg
  * @param {String} author
  * @param {MessageEmbed[]} embeds
+ * @param {{ button: MessageButton, func: Function }[]} extra
  */
-async function pagination(msg, author, embeds) {
+async function pagination(msg, author, embeds, extra) {
   const collector = msg.createMessageComponentCollector({
     filter: async (i) => {
       await i.deferUpdate().catch((e) => null);
@@ -23,9 +26,11 @@ async function pagination(msg, author, embeds) {
         }));
     },
     time: 60000,
-    componentType: "BUTTON"
+    componentType: "BUTTON",
   });
+
   let page = 0;
+  let propIds = extra.map((e) => e.button.customId);
 
   const components = [
     new MessageActionRow().addComponents(
@@ -33,19 +38,31 @@ async function pagination(msg, author, embeds) {
         .setCustomId("back")
         .setEmoji("⬅️")
         .setStyle("PRIMARY"),
-      new MessageButton().setCustomId("next").setEmoji("➡️").setStyle("PRIMARY")
+      new MessageButton()
+        .setCustomId("next")
+        .setEmoji("➡️")
+        .setStyle("PRIMARY"),
+      ...extra.map((e) => e.button)
     ),
   ];
 
   await msg.edit({
     embeds: [embeds[page]],
     components,
+    files: [],
   });
 
   collector.on("collect", async (i) => {
+    if (propIds.includes(i.customId)) {
+      let found = extra.find((e) => e.button.customId === i.customId);
+      if (found.button.customId === "select")
+        return await found.func(author, pets[page].name, msg);
+      else return await found.func();
+    }
+
     if (i.customId === "next") {
-      page++;
-    } else page--;
+      page + 1 >= embeds.length ? (page = 0) : page++;
+    } else page - 1 < 0 ? (page = embeds.length - 1) : page--;
 
     await msg.edit({
       embeds: [embeds[page]],
