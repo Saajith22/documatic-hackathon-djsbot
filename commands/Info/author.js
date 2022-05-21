@@ -11,6 +11,6 @@ module.exports = {
    * @returns
    */
   run: async (client, message, args) => {
-    return message.reply("This game was made by Saajith#1001");
+    return message.reply("This game was made by `Saajith#1001`");
   },
 };

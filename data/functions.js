@@ -14,21 +14,7 @@ const pets = require("./pets.json");
  * @param {MessageEmbed[]} embeds
  * @param {{ button: MessageButton, func: Function }[]} extra
  */
-async function pagination(msg, author, embeds, extra) {
-  const collector = msg.createMessageComponentCollector({
-    filter: async (i) => {
-      await i.deferUpdate().catch((e) => null);
-      if (author === i.user.id) return true;
-      else
-        return void (await i.followUp({
-          content: "You can not use this button!",
-          ephemeral: true,
-        }));
-    },
-    time: 60000,
-    componentType: "BUTTON",
-  });
-
+async function pagination(msg, author, embeds, extra = []) {
   let page = 0;
   let propIds = extra.map((e) => e.button.customId);
 
@@ -46,10 +32,32 @@ async function pagination(msg, author, embeds, extra) {
     ),
   ];
 
-  await msg.edit({
-    embeds: [embeds[page]],
-    components,
-    files: [],
+  let newMsg = msg;
+  if (msg.author.bot)
+    await msg.edit({
+      embeds: [embeds[page]],
+      components,
+      files: [],
+    });
+  else
+    newMsg = await msg.channel.send({
+      embeds: [embeds[page]],
+      components,
+      files: [],
+    });
+
+  const collector = newMsg.createMessageComponentCollector({
+    filter: async (i) => {
+      await i.deferUpdate().catch((e) => null);
+      if (author === i.user.id) return true;
+      else
+        return void (await i.followUp({
+          content: "You can not use this button!",
+          ephemeral: true,
+        }));
+    },
+    time: 60000,
+    componentType: "BUTTON",
   });
 
   collector.on("collect", async (i) => {
@@ -64,7 +72,7 @@ async function pagination(msg, author, embeds, extra) {
       page + 1 >= embeds.length ? (page = 0) : page++;
     } else page - 1 < 0 ? (page = embeds.length - 1) : page--;
 
-    await msg.edit({
+    await newMsg.edit({
       embeds: [embeds[page]],
     });
   });
