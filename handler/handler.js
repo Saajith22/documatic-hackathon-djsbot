@@ -26,3 +26,4 @@ fs.readdirSync("./events/").forEach((file) => {
   console.log(file.replace(".js", ""));
   require(`../events/${file}`);
 });
+console.log(chalk.blue.bold("-".repeat(30)));
