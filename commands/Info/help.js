@@ -21,24 +21,6 @@ module.exports = {
     let cots = [];
 
     if (!args[0]) {
-      //categories to ignore
-      let ignored = ["birthday", "owner"];
-
-      const emo = {
-        fun: "🎆",
-        giveaway: "🎉",
-        info: "📻",
-        mod: "🔨",
-        presence: "🎌",
-        utility: ":comet:",
-        purge: "🧨",
-        key: "🔑",
-        ticket: "🎫",
-        counting: "🔢",
-        socialmedia: "📱",
-        economy: "💰",
-      };
-
       readdirSync("./commands").map(async (dir) => {
         const commands = readdirSync(`./commands/${dir}/`).filter((file) =>
           file.endsWith(".js")

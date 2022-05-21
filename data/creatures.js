@@ -19,15 +19,23 @@ async function addCreature(id, name, msg) {
     await db.create({
       user: id,
       lvl: 1,
-      pets: [found],
+      pets: [
+        {
+          ...found,
+          lvl: 1,
+        },
+      ],
       coins: 100,
     });
   } else {
-    data.pets.push(found);
+    data.pets.push({
+      ...found,
+      lvl: 1,
+    });
     data.save();
   }
 
-  await msg.channel.send(`You received a pet! Pet name: **${found.name}**`);
+  await msg.channel.send(`You received a pet! It's a **${found.name}**!!`);
   await msg.delete();
 }
 
