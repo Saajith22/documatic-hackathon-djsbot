@@ -58,7 +58,7 @@ module.exports = {
             `${cot.dir.charAt(0).toUpperCase() + cot.dir.slice(1)} Commands!`
           )
           .setDescription(
-            `Use \`${prefix}help\` followed by a command name to get more information on a command.\nFor example: \`${prefix}help start\`.\n\n`
+            `Use \`${prefix}help\` followed by a command name to get more information on a command. For example: \`${prefix}help start\`.\n\n`
           )
           .setColor(color);
 

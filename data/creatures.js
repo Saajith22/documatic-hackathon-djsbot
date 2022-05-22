@@ -23,6 +23,10 @@ async function addCreature(id, name, msg) {
         {
           ...found,
           lvl: 1,
+          health: 100,
+          happy: 100,
+          hunger: 100,
+          items: [],
         },
       ],
       coins: 100,

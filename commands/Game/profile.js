@@ -32,7 +32,7 @@ module.exports = {
         },
         {
           name: "Wallet:",
-          value: `> \`${coins}\``,
+          value: `> \`${coins}🪙\``,
         },
         {
           name: "Pets:",

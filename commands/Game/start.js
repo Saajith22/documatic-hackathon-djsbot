@@ -11,6 +11,7 @@ const Canvas = require("canvas");
 const pets = require("../../data/pets.json");
 const { pagination } = require("../../data/functions.js");
 const { addCreature } = require("../../data/creatures.js");
+const db = require("../../models/users");
 
 module.exports = {
   name: "start",
@@ -21,6 +22,13 @@ module.exports = {
    * @param {String[]} args
    */
   run: async (client, message, args) => {
+
+    const data = await db.findOne({
+      user: message.author.id
+    });
+    
+    if(data) return message.reply("You have already started your game!!");
+
     //load font
     Canvas.registerFont("./fonts/Skranji-Regular.ttf", {
       family: "'Skranji', cursive",
@@ -34,7 +42,7 @@ module.exports = {
 
     ctx.font = "65px 'Skranji', cursive";
     ctx.fillStyle = "green";
-    ctx.fillText("GROW", canvas.width / 2 - 65, 65);
+    ctx.fillText("GROW", canvas.width / 2 - 85, 75);
 
     const attach = new MessageAttachment(canvas.toBuffer(), "grow.png");
 

@@ -30,6 +30,20 @@ client.createButtonCollector = async (msg, id, author, func) => {
   });
 };
 
+client.collectMsg = async (msg, embed, func) => {
+  await msg.channel.send({
+    embeds: [embed]
+  });
+
+  const collector = msg.channel.createMessageCollector({
+    filter: (m) => m.author.id === msg.author.id,
+    time: 60000,
+    max: 1,
+  });
+
+  collector.on("collect", func);
+};
+
 module.exports = client;
 
 //HANDLER
