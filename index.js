@@ -32,7 +32,7 @@ client.createButtonCollector = async (msg, id, author, func) => {
 
 client.collectMsg = async (msg, embed, func) => {
   await msg.channel.send({
-    embeds: [embed]
+    embeds: [embed],
   });
 
   const collector = msg.channel.createMessageCollector({
@@ -42,6 +42,40 @@ client.collectMsg = async (msg, embed, func) => {
   });
 
   collector.on("collect", func);
+};
+
+const db = require("./models/users");
+client.formatXP = async (p, player, xp) => {
+  const data = await db.findOne({
+    user: player,
+  });
+
+  if (!data) return;
+
+  const pet = data.pets.find((pe) => pe.name === p.name);
+
+  let playerXp = data.lvl * 20;
+  if (xp === playerXp) data.lvl++;
+  else if (xp > playerXp) {
+    data.lvl++;
+    data.xp = xp - playerXp;
+  } else data.xp = xp;
+
+  let petXp = pet.lvl * 10;
+  if (xp === petXp) pet.lvl++;
+  else if (xp > petXp) {
+    pet.lvl++;
+    pet.xp = xp - petXp;
+  } else pet.xp = xp;
+
+  pet.str + 5;
+
+  await db.findOneAndUpdate(
+    {
+      user: player,
+    },
+    data
+  );
 };
 
 module.exports = client;

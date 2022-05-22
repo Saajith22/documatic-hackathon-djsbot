@@ -31,6 +31,7 @@ module.exports = {
       name: randomName(),
       str: chosen.lvl + 5,
       health: chosen.lvl * 20,
+      bounty: chosen.health * Math.floor(Math.random() * 3) + 1,
     };
 
     const player = {
@@ -42,6 +43,7 @@ module.exports = {
     const embed = new MessageEmbed()
       .setTitle("Battle")
       .setColor("GOLD")
+      .setDescription("```Battle Status```")
       .addFields([
         {
           name: player.name,
@@ -59,7 +61,8 @@ module.exports = {
       embeds: [embed],
     });
 
-    const addTheFields = (embed) => {
+    const editEmbed = (embed, description) => {
+      embed.description = `\`\`\`${description}\`\`\``;
       embed.fields = [
         {
           name: player.name,
@@ -76,28 +79,58 @@ module.exports = {
       return embed;
     };
 
-    const dealDamage = (person, target) => {
+    const dealDamage = async (person, target) => {
       let dmg = Math.floor(Math.random() * person.str) + 10;
       target.health = target.health - dmg < 0 ? 0 : target.health - dmg;
+
+      await msg.edit({
+        embeds: [
+          editEmbed(
+            embed,
+            `${person.name} attacked ${target.name} and dealt ${dmg}% damage!`
+          ),
+        ],
+      });
     };
 
     const doIt = async () => {
       if (player.health > 0 && enemy.health > 0) {
-        dealDamage(player, enemy);
-        dealDamage(enemy, player);
+        await dealDamage(player, enemy);
 
-        await msg.edit({
-          embeds: [addTheFields(embed)],
-        });
+        setTimeout(async () => {
+          if (enemy.health === 0) return;
+          await dealDamage(enemy, player);
+        }, 2000);
+
         setTimeout(async () => await doIt(), 5000);
       } else {
-        let find = data.pets.find((p) => p.name === player.name);
-        find.health = player.health;
-        chosen = find;
-        data.save();
+        let winner = player.health > 0 ? player.name : enemy.name;
+        let xp =
+          winner === player.name
+            ? chosen.lvl + Math.floor(Math.random() * 45)
+            : chosen.lvl + Math.floor(Math.random() * 15);
 
-        let winner = player.health > 0 ? player.name : enemy.name
-        await message.reply(`Battle ended. Winner is **${winner}**`)
+        let prize =
+          winner === player.name
+            ? `**Rewards:**\n\`${enemy.bounty}🪙\`\n\`${xp} XP\``
+            : `**Rewards:**\n\`${xp} XP\``;
+        await message.reply(
+          `The battle between **${player.name}** and **${enemy.name}** has ended!. The winner is **${winner}**\n\n${prize}`
+        );
+
+        let find = data.pets.find((p) => p.name === player.name);
+        if (winner === player.name) data.coins += enemy.bounty;
+
+        find.health = player.health;
+        client.formatXP(find, message.author.id, xp);
+        data.info.chosen = find;
+
+        await db.findOneAndUpdate(
+          {
+            user: message.author.id,
+          },
+          data
+        );
       }
     };
 
