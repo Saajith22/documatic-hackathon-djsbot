@@ -6,7 +6,7 @@ const {
   MessageActionRow,
   MessageButton,
 } = require("discord.js");
-const Canvas = require("canvas");
+const { Canvas, FontLibrary } = require("skia-canvas");
 
 const pets = require("../../data/pets.json");
 const { pagination } = require("../../data/functions.js");
@@ -22,29 +22,26 @@ module.exports = {
    * @param {String[]} args
    */
   run: async (client, message, args) => {
-
     const data = await db.findOne({
-      user: message.author.id
+      user: message.author.id,
     });
-    
+
     if(data) return message.reply("You have already started your game!!");
 
     //load font
-    Canvas.registerFont("./fonts/Skranji-Regular.ttf", {
-      family: "'Skranji', cursive",
-    });
+    FontLibrary.use("Skranji", ["fonts/Skranji-Regular.ttf"]);
 
-    const canvas = Canvas.createCanvas(500, 100);
+    const canvas = new Canvas(500, 100);
     const ctx = canvas.getContext("2d");
 
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.font = "65px 'Skranji', cursive";
+    ctx.font = "65px Skranji";
     ctx.fillStyle = "green";
     ctx.fillText("GROW", canvas.width / 2 - 85, 75);
 
-    const attach = new MessageAttachment(canvas.toBuffer(), "grow.png");
+    const attach = new MessageAttachment(await canvas.toBuffer(), "grow.png");
 
     const embed = new MessageEmbed()
       .setTitle("Welcome to GROW!")
